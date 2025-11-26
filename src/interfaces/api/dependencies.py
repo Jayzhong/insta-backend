@@ -12,6 +12,10 @@ from src.application.posts.post_storage import AbstractPostImageStorage
 from src.application.posts.use_cases.create_post import CreatePostUseCase
 from src.application.posts.use_cases.get_post import GetPostUseCase
 from src.application.posts.use_cases.list_posts import ListPostsUseCase
+from src.application.follows.use_cases.follow_user import FollowUserUseCase
+from src.application.follows.use_cases.unfollow_user import UnfollowUserUseCase
+from src.application.follows.use_cases.get_followers import GetFollowersUseCase
+from src.application.follows.use_cases.get_following import GetFollowingUseCase
 from src.application.users.login_user import LoginUserUseCase
 from src.application.users.register_user import RegisterUserUseCase
 from src.application.users.update_user_profile import UpdateUserProfileUseCase
@@ -27,10 +31,14 @@ from src.infrastructure.persistence.repositories.user_repository import (
 from src.infrastructure.persistence.repositories.post_repository import (
     SQLAlchemyPostRepository,
 )
+from src.infrastructure.persistence.repositories.follow_repository import (
+    SQLAlchemyFollowRepository,
+)
 from src.infrastructure.services.password import PasslibPasswordHasher
 from src.infrastructure.services.jwt import JWTTokenService
 from src.infrastructure.services.storage import LocalAvatarStorage
 from src.infrastructure.services.post_storage import LocalPostImageStorage
+from src.application.follows.follow_repository import AbstractFollowRepository
 
 
 # --- Database Session ---
@@ -71,6 +79,12 @@ def get_post_repository(
     session: AsyncSession = Depends(get_db_session),
 ) -> AbstractPostRepository:
     return SQLAlchemyPostRepository(session)
+
+
+def get_follow_repository(
+    session: AsyncSession = Depends(get_db_session),
+) -> AbstractFollowRepository:
+    return SQLAlchemyFollowRepository(session)
 
 
 # --- Health Check Use Case ---
@@ -121,3 +135,32 @@ def get_list_posts_use_case(
     repo: AbstractPostRepository = Depends(get_post_repository),
 ) -> ListPostsUseCase:
     return ListPostsUseCase(repo)
+
+
+# --- Follow Use Cases ---
+def get_follow_user_use_case(
+    follow_repo: AbstractFollowRepository = Depends(get_follow_repository),
+    user_repo: AbstractUserRepository = Depends(get_user_repository),
+) -> FollowUserUseCase:
+    return FollowUserUseCase(follow_repo, user_repo)
+
+
+def get_unfollow_user_use_case(
+    follow_repo: AbstractFollowRepository = Depends(get_follow_repository),
+    user_repo: AbstractUserRepository = Depends(get_user_repository),
+) -> UnfollowUserUseCase:
+    return UnfollowUserUseCase(follow_repo, user_repo)
+
+
+def get_get_followers_use_case(
+    follow_repo: AbstractFollowRepository = Depends(get_follow_repository),
+    user_repo: AbstractUserRepository = Depends(get_user_repository),
+) -> GetFollowersUseCase:
+    return GetFollowersUseCase(follow_repo, user_repo)
+
+
+def get_get_following_use_case(
+    follow_repo: AbstractFollowRepository = Depends(get_follow_repository),
+    user_repo: AbstractUserRepository = Depends(get_user_repository),
+) -> GetFollowingUseCase:
+    return GetFollowingUseCase(follow_repo, user_repo)
