@@ -1,0 +1,29 @@
+[project]
+name = "insta-backend"
+version = "0.1.0"
+description = "An Instagram-like backend service built with Clean Architecture."
+requires-python = ">=3.10"
+dependencies = [
+    "aiofiles>=24.1.0",
+    "alembic>=1.17.2",
+    "asyncpg>=0.30.0",
+    "fastapi>=0.115.0",
+    "greenlet>=3.2.4",
+    "passlib[argon2]>=1.7.4",
+    "python-jose[cryptography]>=3.4.0",
+    "python-multipart>=0.0.10",
+    "sqlalchemy>=2.0.36",
+    "email_validator>=2.1.1",
+    "python-dotenv>=1.0.1",
+]
+
+[tool.pytest.ini_options]
+pythonpath = "."
+testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.3",
+    "pytest-asyncio>=0.24.0",
+    "uvicorn[standard]>=0.30.6",
+]
