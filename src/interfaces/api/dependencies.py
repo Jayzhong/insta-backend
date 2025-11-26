@@ -8,10 +8,15 @@ from src.application.common.token_service import AbstractTokenService
 from src.application.health.health_check import HealthCheckUseCase
 from src.application.health.health_repository import AbstractHealthRepository
 from src.application.users.avatar_storage import AbstractAvatarStorage
+from src.application.posts.post_storage import AbstractPostImageStorage
+from src.application.posts.use_cases.create_post import CreatePostUseCase
+from src.application.posts.use_cases.get_post import GetPostUseCase
+from src.application.posts.use_cases.list_posts import ListPostsUseCase
 from src.application.users.login_user import LoginUserUseCase
 from src.application.users.register_user import RegisterUserUseCase
 from src.application.users.update_user_profile import UpdateUserProfileUseCase
 from src.application.users.user_repository import AbstractUserRepository
+from src.application.posts.post_repository import AbstractPostRepository
 from src.infrastructure.persistence.database import AsyncSessionLocal
 from src.infrastructure.persistence.repositories.health_repository import (
     DummyHealthRepository,
@@ -19,9 +24,13 @@ from src.infrastructure.persistence.repositories.health_repository import (
 from src.infrastructure.persistence.repositories.user_repository import (
     SQLAlchemyUserRepository,
 )
+from src.infrastructure.persistence.repositories.post_repository import (
+    SQLAlchemyPostRepository,
+)
 from src.infrastructure.services.password import PasslibPasswordHasher
 from src.infrastructure.services.jwt import JWTTokenService
 from src.infrastructure.services.storage import LocalAvatarStorage
+from src.infrastructure.services.post_storage import LocalPostImageStorage
 
 
 # --- Database Session ---
@@ -43,6 +52,10 @@ def get_avatar_storage() -> AbstractAvatarStorage:
     return LocalAvatarStorage()
 
 
+def get_post_image_storage() -> AbstractPostImageStorage:
+    return LocalPostImageStorage()
+
+
 # --- Repositories ---
 def get_health_repository() -> AbstractHealthRepository:
     return DummyHealthRepository()
@@ -52,6 +65,12 @@ def get_user_repository(
     session: AsyncSession = Depends(get_db_session),
 ) -> AbstractUserRepository:
     return SQLAlchemyUserRepository(session)
+
+
+def get_post_repository(
+    session: AsyncSession = Depends(get_db_session),
+) -> AbstractPostRepository:
+    return SQLAlchemyPostRepository(session)
 
 
 # --- Health Check Use Case ---
@@ -82,3 +101,23 @@ def get_update_user_profile_use_case(
     storage: AbstractAvatarStorage = Depends(get_avatar_storage),
 ) -> UpdateUserProfileUseCase:
     return UpdateUserProfileUseCase(repo, storage)
+
+
+# --- Post Use Cases ---
+def get_create_post_use_case(
+    repo: AbstractPostRepository = Depends(get_post_repository),
+    storage: AbstractPostImageStorage = Depends(get_post_image_storage),
+) -> CreatePostUseCase:
+    return CreatePostUseCase(repo, storage)
+
+
+def get_get_post_use_case(
+    repo: AbstractPostRepository = Depends(get_post_repository),
+) -> GetPostUseCase:
+    return GetPostUseCase(repo)
+
+
+def get_list_posts_use_case(
+    repo: AbstractPostRepository = Depends(get_post_repository),
+) -> ListPostsUseCase:
+    return ListPostsUseCase(repo)

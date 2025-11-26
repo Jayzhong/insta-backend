@@ -19,6 +19,7 @@ load_dotenv()
 # Import Base and Models
 from src.infrastructure.persistence.database import Base
 from src.infrastructure.persistence.orm.user import SQLAlchemyUser  # noqa
+from src.infrastructure.persistence.orm.post import SQLAlchemyPost # noqa
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
