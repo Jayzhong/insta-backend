@@ -91,9 +91,13 @@ uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 uv run alembic upgrade head
 ```
 
-## 7. Current Feature Status
+### Running Tests
+```bash
+uv run pytest tests/integration/
+```
 - **Auth**: Registration (Argon2), Login (JWT), Profile Update.
+- **Posts**: Create, Get (by ID), List (by User), Home Feed (with Cursor-based Pagination).
+- **Follows**: Follow User, Unfollow User, Get Followers, Get Following.
 - **UX Features**: Default Avatar Generation (`ui-avatars.com`), Explicit Avatar Deletion.
 - **Infra**: PostgreSQL, Async SQLAlchemy, Python-Dotenv.
-
 ```

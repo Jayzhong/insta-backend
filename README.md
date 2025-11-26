@@ -71,6 +71,12 @@ uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
+### 7. Running Tests
+```bash
+# Execute all integration tests
+uv run pytest tests/integration/
+```
+
 ## 📖 API Documentation
 
 Once the server is running, access the interactive API documentation:
