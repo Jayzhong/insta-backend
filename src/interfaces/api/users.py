@@ -3,8 +3,15 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, File, Form, UploadFile
 from pydantic import BaseModel, ConfigDict, EmailStr
 
-from src.application.users.login_user import LoginUserResponse, LoginUserUseCase
-from src.application.users.register_user import RegisterUserUseCase
+from src.application.users.login_user import (
+    LoginUserRequest,
+    LoginUserResponse,
+    LoginUserUseCase,
+)
+from src.application.users.register_user import (
+    RegisterUserRequest,
+    RegisterUserUseCase,
+)
 from src.application.users.update_user_profile import (
     UpdateUserProfileRequest,
     UpdateUserProfileUseCase,
@@ -56,7 +63,10 @@ async def register_user(
     schema: UserRegisterIn,
     use_case: RegisterUserUseCase = Depends(get_register_user_use_case),
 ):
-    user = await use_case.execute(schema)
+    request_dto = RegisterUserRequest(
+        username=schema.username, email=schema.email, password=schema.password
+    )
+    user = await use_case.execute(request_dto)
     return user
 
 
@@ -65,7 +75,8 @@ async def login_for_access_token(
     schema: UserLoginIn,
     use_case: LoginUserUseCase = Depends(get_login_user_use_case),
 ):
-    login_response: LoginUserResponse = await use_case.execute(schema)
+    request_dto = LoginUserRequest(email=schema.email, password=schema.password)
+    login_response: LoginUserResponse = await use_case.execute(request_dto)
     return login_response
 
 
